@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { View, Text, ScrollView, TextInput, StyleSheet } from "react-native";
+import { Alert } from "react-native";
 
 import { Colors } from "../../constants/colors";
 import { Place } from "../../models/place";
@@ -10,7 +11,7 @@ import LocationPicker from "./LocationPicker";
 function PlaceForm({ onCreatePlace }) {
   const [enteredTitle, setEnteredTitle] = useState("");
   const [selectedImage, setSelectedImage] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState();
 
   function changeTitleHandler(enteredText) {
     setEnteredTitle(enteredText);
@@ -25,12 +26,22 @@ function PlaceForm({ onCreatePlace }) {
   }, []);
 
   function savePlaceHandler() {
-    const placeData = new Place(
-      enteredTitle,
-      selectedImage,
-      selectedLocation.address,
-      selectedLocation
-    );
+    if (!enteredTitle || enteredTitle.trim().length === 0) {
+      Alert.alert("Missing title", "Please enter a title.");
+      return;
+    }
+
+    if (!selectedImage) {
+      Alert.alert("Missing image", "Please take an image.");
+      return;
+    }
+
+    if (!selectedLocation || !selectedLocation.lat || !selectedLocation.lng) {
+      Alert.alert("Missing location", "Please pick a location.");
+      return;
+    }
+
+    const placeData = new Place(enteredTitle, selectedImage, selectedLocation);
     onCreatePlace(placeData);
   }
 

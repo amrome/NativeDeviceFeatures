@@ -1,16 +1,52 @@
+import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as SplashScreen from "expo-splash-screen";
 
 import AllPlaces from "./screens/AllPlaces";
 import AddPlace from "./screens/AddPlace";
 import IconButton from "./components/UI/IconButton";
 import { Colors } from "./constants/colors";
 import Map from "./screens/Map";
+import { init } from "./util/database";
 
 const Stack = createNativeStackNavigator();
 
+SplashScreen.preventAutoHideAsync().catch(() => {
+  // no-op: this can throw if called multiple times during fast refresh
+});
+
 export default function App() {
+  const [dbInitialized, setDbInitialized] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function prepare() {
+      try {
+        await init();
+      } catch (err) {
+        console.log("Database initialization failed.", err);
+      } finally {
+        if (isMounted) {
+          setDbInitialized(true);
+        }
+        await SplashScreen.hideAsync();
+      }
+    }
+
+    prepare();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  if (!dbInitialized) {
+    return null;
+  }
+
   return (
     <>
       <StatusBar style="auto" />
@@ -33,7 +69,7 @@ export default function App() {
                   size={24}
                   color={tintColor}
                   onPress={() => {
-                    navigation.navigate("AddPlace");
+                    navigation.push("AddPlace");
                   }}
                 />
               ),

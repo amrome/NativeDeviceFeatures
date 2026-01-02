@@ -5,7 +5,7 @@ import { Colors } from "../../constants/colors";
 function PlaceItem({ place, onSelect }) {
   return (
     <Pressable
-      style={({ pressed }) => pressed && styles.pressed}
+      style={({ pressed }) => [styles.item, pressed && styles.pressed]}
       onPress={onSelect}
     >
       <Image source={{ uri: place.imageUri }} style={styles.image} />
@@ -24,20 +24,20 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     borderRadius: 6,
     marginVertical: 12,
+    marginHorizontal: 12,
     backgroundColor: Colors.primary500,
     elevation: 2,
     shadowColor: "black",
     shadowOpacity: 0.15,
     shadowOffset: { width: 1, height: 1 },
     shadowRadius: 2,
+    overflow: "hidden",
   },
   pressed: {
     opacity: 0.9,
   },
   image: {
     flex: 1,
-    borderBottomLeftRadius: 4,
-    borderTopLeftRadius: 4,
     height: 100,
   },
   info: {
@@ -47,10 +47,10 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: "bold",
     fontSize: 18,
-    color: Colors.primary700,
+    color: Colors.gray700,
   },
   address: {
     fontSize: 12,
-    color: Colors.primary700,
+    color: Colors.gray700,
   },
 });

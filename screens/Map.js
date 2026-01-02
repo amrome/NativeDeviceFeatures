@@ -1,10 +1,11 @@
 import { StyleSheet, Alert } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useCallback, useLayoutEffect, useState } from "react";
+import { CommonActions } from "@react-navigation/native";
 
 import IconButton from "../components/UI/IconButton";
 
-function Map({ navigation }) {
+function Map({ navigation, route }) {
   const [selectedLocation, setSelectedLocation] = useState();
 
   const region = {
@@ -29,11 +30,21 @@ function Map({ navigation }) {
       );
       return;
     }
-    navigation.navigate("AddPlace", {
-      pickedLat: selectedLocation.lat,
-      pickedLng: selectedLocation.lng,
-    });
-  }, [selectedLocation, navigation]);
+
+    const returnTo = route?.params?.returnTo;
+
+    if (returnTo) {
+      navigation.dispatch({
+        ...CommonActions.setParams({
+          pickedLat: selectedLocation.lat,
+          pickedLng: selectedLocation.lng,
+        }),
+        source: returnTo,
+      });
+    }
+
+    navigation.goBack();
+  }, [selectedLocation, navigation, route]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
