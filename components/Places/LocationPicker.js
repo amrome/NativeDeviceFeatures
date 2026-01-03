@@ -42,13 +42,19 @@ function LocationPicker({ onPickLocation }) {
   useEffect(() => {
     async function handleLocation() {
       if (pickedLocation) {
+        console.log(
+          "[LocationPicker] handleLocation - pickedLocation:",
+          pickedLocation
+        );
         try {
           const address = await getAddress(
             pickedLocation.lat,
             pickedLocation.lng
           );
+          console.log("[LocationPicker] Address fetched:", address);
           onPickLocation({ ...pickedLocation, address: address });
         } catch (error) {
+          console.log("[LocationPicker] Address fetch error:", error);
           onPickLocation({
             ...pickedLocation,
             address: "Address not available",

@@ -1,8 +1,32 @@
-import { FlatList, View, Text, StyleSheet } from "react-native";
+import { FlatList, View, Text, StyleSheet, Alert } from "react-native";
 import PlaceItem from "./PlaceItem";
 import { Colors } from "../../constants/colors";
+import { useNavigation } from "@react-navigation/native";
 
-function PlacesList({ places }) {
+function PlacesList({ places, onDeletePlace }) {
+  const navigation = useNavigation();
+
+  function selectPlaceHandler(id) {
+    navigation.navigate("PlaceDetails", {
+      placeId: id,
+    });
+  }
+
+  function deleteHandler(place) {
+    Alert.alert(
+      "Delete Place",
+      `Are you sure you want to delete "${place.title}"?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => onDeletePlace(place.id),
+        },
+      ]
+    );
+  }
+
   if (!places || places.length === 0) {
     return (
       <View style={styles.fallbackContainer}>
@@ -16,7 +40,13 @@ function PlacesList({ places }) {
       style={styles.list}
       data={places}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <PlaceItem place={item} />}
+      renderItem={({ item }) => (
+        <PlaceItem
+          place={item}
+          onSelect={selectPlaceHandler}
+          onDelete={deleteHandler}
+        />
+      )}
     />
   );
 }

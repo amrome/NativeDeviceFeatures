@@ -6,16 +6,42 @@ import { CommonActions } from "@react-navigation/native";
 import IconButton from "../components/UI/IconButton";
 
 function Map({ navigation, route }) {
-  const [selectedLocation, setSelectedLocation] = useState();
-
-  const region = {
-    latitude: 37.78,
-    longitude: -122.43,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+  const initialLocation = route.params && {
+    lat: route.params.initialLat,
+    lng: route.params.initialLng,
   };
 
+  const isReadonly = route.params?.readonly || false;
+
+  const [selectedLocation, setSelectedLocation] = useState(initialLocation);
+
+  const region = {
+    latitude: initialLocation ? initialLocation.lat : 37.78,
+    longitude: initialLocation ? initialLocation.lng : -122.43,
+    latitudeDelta: isReadonly ? 0.005 : 0.0922,
+    longitudeDelta: isReadonly ? 0.005 : 0.0421,
+  };
+
+  //   const initialLocation =
+  //     route.params?.initialLat && route.params?.initialLng
+  //       ? {
+  //           latitude: route.params.initialLat,
+  //           longitude: route.params.initialLng,
+  //           latitudeDelta: 0.0922,
+  //           longitudeDelta: 0.0421,
+  //         }
+  //       : {
+  //           latitude: 37.78,
+  //           longitude: -122.43,
+  //           latitudeDelta: 0.0922,
+  //           longitudeDelta: 0.0421,
+  //         };
+
   function selectLocationHandler(event) {
+    if (isReadonly) {
+      return;
+    }
+
     const lat = event.nativeEvent.coordinate.latitude;
     const lng = event.nativeEvent.coordinate.longitude;
 
@@ -47,6 +73,10 @@ function Map({ navigation, route }) {
   }, [selectedLocation, navigation, route]);
 
   useLayoutEffect(() => {
+    if (isReadonly) {
+      return;
+    }
+
     navigation.setOptions({
       headerRight: ({ tintColor }) => (
         <IconButton
@@ -57,12 +87,12 @@ function Map({ navigation, route }) {
         />
       ),
     });
-  }, [navigation, savePickedLocationHandler]);
+  }, [navigation, savePickedLocationHandler, isReadonly]);
 
   return (
     <MapView
       style={styles.map}
-      initialRegion={region}
+      initialRegion={initialLocation}
       onPress={selectLocationHandler}
     >
       {selectedLocation && (

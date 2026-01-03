@@ -10,6 +10,7 @@ import IconButton from "./components/UI/IconButton";
 import { Colors } from "./constants/colors";
 import Map from "./screens/Map";
 import { init } from "./util/database";
+import PlaceDetail from "./screens/PlaceDetail";
 
 const Stack = createNativeStackNavigator();
 
@@ -87,6 +88,13 @@ export default function App() {
             component={Map}
             options={{
               title: "Select on Map",
+            }}
+          />
+          <Stack.Screen
+            name="PlaceDetails"
+            component={PlaceDetail}
+            options={{
+              title: "Loading Place...",
             }}
           />
         </Stack.Navigator>

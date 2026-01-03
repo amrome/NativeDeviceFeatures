@@ -1,18 +1,26 @@
 import { Pressable, View, Text, Image, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import { Colors } from "../../constants/colors";
 
-function PlaceItem({ place, onSelect }) {
+function PlaceItem({ place, onSelect, onDelete }) {
   return (
     <Pressable
       style={({ pressed }) => [styles.item, pressed && styles.pressed]}
-      onPress={onSelect}
+      onPress={onSelect.bind(this, place.id)}
+      onLongPress={onDelete.bind(this, place)}
     >
       <Image source={{ uri: place.imageUri }} style={styles.image} />
       <View style={styles.info}>
         <Text style={styles.title}>{place.title}</Text>
         <Text style={styles.address}>{place.address}</Text>
       </View>
+      <Pressable
+        style={styles.deleteButton}
+        onPress={onDelete.bind(this, place)}
+      >
+        <Ionicons name="trash-outline" size={24} color={Colors.gray700} />
+      </Pressable>
     </Pressable>
   );
 }
@@ -52,5 +60,9 @@ const styles = StyleSheet.create({
   address: {
     fontSize: 12,
     color: Colors.gray700,
+  },
+  deleteButton: {
+    padding: 12,
+    justifyContent: "center",
   },
 });

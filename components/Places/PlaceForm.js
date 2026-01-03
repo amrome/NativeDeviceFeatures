@@ -22,10 +22,15 @@ function PlaceForm({ onCreatePlace }) {
   }
 
   const pickLocationHandler = useCallback((location) => {
+    console.log("[PlaceForm] pickLocationHandler called with:", location);
     setSelectedLocation(location);
   }, []);
 
   function savePlaceHandler() {
+    console.log("[PlaceForm] savePlaceHandler - Title:", enteredTitle);
+    console.log("[PlaceForm] savePlaceHandler - Image:", selectedImage);
+    console.log("[PlaceForm] savePlaceHandler - Location:", selectedLocation);
+
     if (!enteredTitle || enteredTitle.trim().length === 0) {
       Alert.alert("Missing title", "Please enter a title.");
       return;
